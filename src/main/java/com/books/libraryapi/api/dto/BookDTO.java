@@ -1,6 +1,7 @@
-package com.books.library_api.api.dto;
+package com.books.libraryapi.api.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class BookDTO {
 
     private Long id;
