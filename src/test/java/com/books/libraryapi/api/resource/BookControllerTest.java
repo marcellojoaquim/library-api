@@ -1,6 +1,7 @@
 package com.books.libraryapi.api.resource;
 
 import com.books.libraryapi.api.dto.BookDTO;
+import com.books.libraryapi.exception.BusinessException;
 import com.books.libraryapi.model.entity.Book;
 import com.books.libraryapi.service.BoookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -59,8 +61,36 @@ public class BookControllerTest {
     }
 
     @Test
-    @DisplayName("Should return error when create a new book")
-    void createInvalidBookTest(){
+    @DisplayName("Should return error when create a new book with invalid fields")
+    void createInvalidBookTest() throws Exception{
+        String json = new ObjectMapper().writeValueAsString(new BookDTO());
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(BOOK_API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
 
+        mockMvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors", hasSize(3)));
+    }
+
+    @Test
+    @DisplayName("Should throws an BusinessException when save a book with already isbn existent")
+    void testCreateBookWhenIsbnAlreadyExists() throws Exception{
+        BookDTO dto = BookDTO.builder().author("Author").title("New Book").isbn("1234").build();
+        String json = new ObjectMapper().writeValueAsString(dto);
+        String msg = "Isbn already exists.";
+        BDDMockito.given(service.save(Mockito.any(Book.class)))
+                .willThrow(new BusinessException(msg));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(BOOK_API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mockMvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors", hasSize(1)))
+                .andExpect(jsonPath("errors[0]").value(msg));
     }
 }

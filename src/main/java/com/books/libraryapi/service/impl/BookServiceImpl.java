@@ -1,5 +1,6 @@
 package com.books.libraryapi.service.impl;
 
+import com.books.libraryapi.exception.BusinessException;
 import com.books.libraryapi.model.entity.Book;
 import com.books.libraryapi.model.repository.BookRepository;
 import com.books.libraryapi.service.BoookService;
@@ -16,6 +17,9 @@ public class BookServiceImpl implements BoookService {
 
     @Override
     public Book save(Book book) {
+        if(repository.existsByIsbn(book.getIsbn())){
+            throw new BusinessException("Isbn already exists.");
+        }
         return repository.save(book);
     }
 }
