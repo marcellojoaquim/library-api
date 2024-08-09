@@ -8,4 +8,6 @@ public interface BoookService {
     Book save(Book any);
 
     Optional<Book> getById(Long id);
+
+    void deleteById(Book book);
 }

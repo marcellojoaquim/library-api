@@ -134,4 +134,28 @@ public class BookControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DisplayName("Should delete a book resource")
+    void testDeleteBook() throws Exception{
+        given(service.getById(anyLong())).willReturn(Optional.of(Book.builder().id(1L).build()));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(BOOK_API.concat("/"+ 1));
+
+        mockMvc.perform(request)
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Should return not found when delete a nonexistent book")
+    void testDeleteBookNotFound() throws Exception{
+        given(service.getById(anyLong())).willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(BOOK_API.concat("/"+ 1));
+
+        mockMvc.perform(request)
+                .andExpect(status().isNotFound());
+    }
 }
