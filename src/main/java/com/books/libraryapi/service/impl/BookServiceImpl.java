@@ -6,6 +6,8 @@ import com.books.libraryapi.model.repository.BookRepository;
 import com.books.libraryapi.service.BoookService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BookServiceImpl implements BoookService {
 
@@ -21,5 +23,10 @@ public class BookServiceImpl implements BoookService {
             throw new BusinessException("Isbn already exists.");
         }
         return repository.save(book);
+    }
+
+    @Override
+    public Optional<Book> getById(Long id) {
+        return Optional.empty();
     }
 }
