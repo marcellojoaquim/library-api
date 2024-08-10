@@ -42,11 +42,23 @@ public class BookController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public BookDTO update(@PathVariable Long id, @RequestBody BookDTO bookDTO){
+        return service.getById(id).map( book -> {
+            book.setAuthor(bookDTO.getAuthor());
+            book.setTitle(bookDTO.getTitle());
+            book = service.update(book);
+            return modelMapper.map(book, BookDTO.class);
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) throws Exception{
         Book book = service.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        service.deleteById(book);
+        service.delete(book);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

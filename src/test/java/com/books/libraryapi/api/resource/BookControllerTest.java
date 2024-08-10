@@ -158,4 +158,47 @@ public class BookControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DisplayName("Should return a updated book")
+    public void testUpdateBook() throws Exception{
+        Long id = 1L;
+        String json = new ObjectMapper().writeValueAsString(Book.builder().id(1L).author("Author").title("New Book").isbn("123445").build());
+        Book book = Book.builder().id(1L).title("Other Book").author("Other Author").isbn("123445").build();
+        given(service.getById(id)).willReturn(Optional.of(book));
+
+        given(service.update(book)).willReturn(Book.builder().id(1L).title("Other Book").author("Other Author").isbn("123445").build());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(BOOK_API.concat("/"+ 1))
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(1L))
+                .andExpect(jsonPath("title").value("Other Book"))
+                .andExpect(jsonPath("author").value("Other Author"))
+                .andExpect(jsonPath("isbn").value("123445"));;
+    }
+
+    @Test
+    @DisplayName("Should return 404 when try a updated book")
+    public void testUpdateBookNotFound() throws Exception{
+
+        String json = new ObjectMapper().writeValueAsString(Book.builder().id(1L).author("Author").title("New Book").isbn("1234").build());
+        given(service.getById(anyLong())).willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(BOOK_API.concat("/"+ 1))
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isNotFound());
+    }
+
+
 }
