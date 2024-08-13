@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@WebMvcTest
+@WebMvcTest(controllers = {BookController.class})
 public class BookControllerTest {
 
     static String BOOK_API = "/api/books";
