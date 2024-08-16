@@ -8,6 +8,7 @@ import com.books.libraryapi.service.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 
@@ -22,7 +23,9 @@ public class LoanController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Long create(@RequestBody LoanDTO dto){
-        Book book = bookService.getBookByIsbn(dto.getIsbn()).get();
+        Book book = bookService.getBookByIsbn(dto.getIsbn()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Book not found for this isbn")
+        );
 
         Loan entity = Loan.builder()
                 .book(book)
@@ -34,4 +37,5 @@ public class LoanController {
 
         return entity.getId();
     }
+
 }
