@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -169,5 +169,21 @@ class BookServiceTest {
         assertEquals(list, result.getContent());
         assertEquals(0, result.getPageable().getPageNumber());
         assertEquals(10, result.getPageable().getPageSize());
+    }
+
+    @Test
+    @DisplayName("Should return a book by isbn")
+    void testFindBookByIsbn(){
+        String isbn = "1230";
+        Book book = Book.builder().id(1L).author("Author").title("New Book").isbn("1230").build();
+        when(repository.findByIsbn(isbn)).thenReturn(Optional.of(book));
+
+        Optional<Book> returnedBook = service.getBookByIsbn(isbn);
+
+        assertNotNull(returnedBook);
+        assertEquals("1230", returnedBook.get().getIsbn());
+        assertEquals(1L, returnedBook.get().getId());
+
+        verify(repository, times(1)).findByIsbn(isbn);
     }
 }
