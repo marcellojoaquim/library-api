@@ -31,6 +31,7 @@ import static org.mockito.Mockito.*;
 class BookServiceTest {
 
     BookService service;
+    Book book;
 
     @MockBean
     BookRepository repository;
@@ -38,13 +39,12 @@ class BookServiceTest {
     @BeforeEach
     void setup() {
         this.service = new BookServiceImpl(repository);
+        book = Book.builder().author("Author").id(1L).title("New Book").isbn("1234").build();
     }
 
     @Test
     @DisplayName("Should return success when save book")
     void testSaveBook() {
-        Book book = Book.builder().author("Author").title("New Book").isbn("1234").build();
-
         when(repository.existsByIsbn(anyString())).thenReturn(false);
         when(repository.save(book)).thenReturn(Book.builder().id(1L).isbn("1234").title("New Book").author("Author").build());
 
@@ -59,7 +59,6 @@ class BookServiceTest {
     @Test
     @DisplayName("Should throws an Exception when save a book with isbn existent")
     void testSaveBookWithIsbnExistent() {
-        Book book = Book.builder().author("Author").title("New Book").isbn("1234").build();
         when(repository.existsByIsbn(anyString())).thenReturn(true);
 
         Throwable exception = Assertions.catchThrowable(() -> service.save(book));
@@ -73,7 +72,6 @@ class BookServiceTest {
     @DisplayName("Should return a book by id")
     void testFindBookById() {
         Long id = 1L;
-        Book book = Book.builder().author("Author").title("New Book").isbn("1234").build();
         book.setId(id);
         when(repository.findById(id)).thenReturn(Optional.of(book));
 
@@ -101,7 +99,6 @@ class BookServiceTest {
     @Test
     @DisplayName("Should delete a book")
     void testDeleteBookById() {
-        Book book = Book.builder().id(1L).author("Author").title("New Book").isbn("1234").build();
         BDDMockito.willDoNothing().given(repository).delete(book);
 
         assertDoesNotThrow(() -> service.delete(book));
@@ -127,7 +124,6 @@ class BookServiceTest {
     @Test
     @DisplayName("Should return a updated book")
     void testUpdatedBook(){
-        Book book = Book.builder().id(1L).author("Author").title("New Book").isbn("1234").build();
         when(repository.save(book)).thenReturn(book);
 
         Book updatedBook = service.update(book);
@@ -155,7 +151,6 @@ class BookServiceTest {
     @Test
     @DisplayName("Should find book with parameters")
     void findBookTest(){
-        Book book = Book.builder().id(1L).author("Author").title("New Book").isbn("1234").build();
 
         PageRequest pageable = PageRequest.of(0, 10);
         List<Book> list = Arrays.asList(book);
@@ -174,14 +169,13 @@ class BookServiceTest {
     @Test
     @DisplayName("Should return a book by isbn")
     void testFindBookByIsbn(){
-        String isbn = "1230";
-        Book book = Book.builder().id(1L).author("Author").title("New Book").isbn("1230").build();
+        String isbn = "1234";
         when(repository.findByIsbn(isbn)).thenReturn(Optional.of(book));
 
         Optional<Book> returnedBook = service.getBookByIsbn(isbn);
 
         assertNotNull(returnedBook);
-        assertEquals("1230", returnedBook.get().getIsbn());
+        assertEquals("1234", returnedBook.get().getIsbn());
         assertEquals(1L, returnedBook.get().getId());
 
         verify(repository, times(1)).findByIsbn(isbn);

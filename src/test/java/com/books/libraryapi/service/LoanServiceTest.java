@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LoanServiceTest {
 
     LoanService service;
+    Book book;
+    Loan loan;
 
     @MockBean
     LoanRepository repository;
@@ -39,27 +40,26 @@ public class LoanServiceTest {
     @BeforeEach
     void setUp(){
         this.service = new LoanServiceImpl(repository);
+        book = Book.builder().id(1L).build();
+        loan = Loan.builder()
+                .book(book)
+                .loanDate(LocalDate.now())
+                .customer("Cliente")
+                .id(1L)
+                .build();
     }
 
     @Test
     @DisplayName("Should save a loan")
     void testSaveLoan() {
-        Book book = Book.builder().id(1L).build();
         Loan savingLoan = Loan.builder()
                 .book(book)
                 .loanDate(LocalDate.now())
                 .customer("Cliente")
                 .build();
 
-        Loan savedLoan = Loan.builder()
-                        .id(1L)
-                        .customer("Cliente")
-                        .book(book)
-                        .loanDate(LocalDate.now())
-                        .build();
-
         when(repository.existsByBookAndNotReturned(book)).thenReturn(false);
-        when(repository.save(savingLoan)).thenReturn(savedLoan);
+        when(repository.save(savingLoan)).thenReturn(loan);
 
         Loan loan = service.save(savingLoan);
 
@@ -75,7 +75,6 @@ public class LoanServiceTest {
     @Test
     @DisplayName("Should throw an exception when create a new loan for loaned book")
     void testThrowExceptionLoanedBook() {
-        Book book = Book.builder().id(1L).build();
         Loan savingLoan = Loan.builder()
                 .book(book)
                 .loanDate(LocalDate.now())
@@ -95,14 +94,6 @@ public class LoanServiceTest {
     @DisplayName("Should return a loan by id")
     void testGetLoanDetails(){
         long id = 1L;
-        Book book = Book.builder().id(id).build();
-
-        Loan loan = Loan.builder()
-                .book(book)
-                .loanDate(LocalDate.now())
-                .customer("Cliente")
-                .id(id)
-                .build();
 
         when(repository.findById(id)).thenReturn(Optional.of(loan));
 
@@ -120,16 +111,6 @@ public class LoanServiceTest {
     @Test
     @DisplayName("Should update a loan")
     void testUpdateLoan(){
-        Long id = 1L;
-        Book book = Book.builder().id(id).build();
-
-        Loan loan = Loan.builder()
-                .book(book)
-                .loanDate(LocalDate.now())
-                .customer("Cliente")
-                .id(id)
-                .build();
-
         loan.setReturned(true);
 
         when(repository.save(loan)).thenReturn(loan);
@@ -147,14 +128,6 @@ public class LoanServiceTest {
         LoanFilterDTO loanFilterDTO = LoanFilterDTO.builder()
                 .customer("Cliente")
                 .isbn("123").build();
-
-        Book book = Book.builder().id(1L).build();
-        Loan loan = Loan.builder()
-                .book(book)
-                .loanDate(LocalDate.now())
-                .customer("Cliente")
-                .id(1L)
-                .build();
 
         PageRequest pageable = PageRequest.of(0, 10);
         List<Loan> list = Arrays.asList(loan);

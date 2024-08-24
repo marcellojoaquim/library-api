@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 public class LoanRepositoryTest {
 
-
     Book book;
     Loan loan;
 
