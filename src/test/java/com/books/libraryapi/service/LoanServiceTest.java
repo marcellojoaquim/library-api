@@ -30,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 public class LoanServiceTest {
 
-    LoanService service;
-    Book book;
-    Loan loan;
+    private LoanService service;
+    private Book book;
+    private Loan loan;
 
     @MockBean
     LoanRepository repository;

@@ -6,6 +6,7 @@ import com.books.libraryapi.model.entity.Book;
 import com.books.libraryapi.service.BookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {BookController.class})
 public class BookControllerTest {
 
-    static String BOOK_API = "/api/books";
+    private static String BOOK_API = "/api/books";
 
     @Autowired
     MockMvc mockMvc;

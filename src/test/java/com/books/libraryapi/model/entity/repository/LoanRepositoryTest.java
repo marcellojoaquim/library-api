@@ -24,8 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 public class LoanRepositoryTest {
 
-    Book book;
-    Loan loan;
+    private Book book;
+    private Loan loan;
 
     @Autowired
     private TestEntityManager entityManager;

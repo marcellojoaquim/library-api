@@ -10,6 +10,7 @@ import com.books.libraryapi.service.BookService;
 import com.books.libraryapi.service.LoanService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,6 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LoanControllerTest {
 
     static final String LOAN_API = "/api/loans";
+    private LoanDTO dto;
+    private Book book;
 
     @Autowired
     MockMvc mockMvc;
@@ -53,14 +56,17 @@ public class LoanControllerTest {
     @MockBean
     LoanService loanService;
 
+    @BeforeEach
+    void setup(){
+        dto = LoanDTO.builder().isbn("123").customer("Cliente").build();
+        book = Book.builder().id(1L).isbn("123").build();
+    }
+
     @Test
     @DisplayName("Should make a loan successfully")
     void testCreateLoan() throws Exception{
 
-        LoanDTO dto = LoanDTO.builder().isbn("123").customer("Cliente").build();
         String json = new ObjectMapper().writeValueAsString(dto);
-
-        Book book = Book.builder().id(1L).isbn("123").build();
         given(bookService.getBookByIsbn("123")).willReturn(
                 Optional.of(book));
 
@@ -81,7 +87,6 @@ public class LoanControllerTest {
     @Test
     @DisplayName("Should return error when create loan with invalid isbn")
     void testInvalidIsbnCreateLoan() throws Exception {
-        LoanDTO dto = LoanDTO.builder().isbn("123").customer("Cliente").build();
         String json = new ObjectMapper().writeValueAsString(dto);
 
         given(bookService.getBookByIsbn("123")).willReturn(
@@ -102,10 +107,8 @@ public class LoanControllerTest {
     @Test
     @DisplayName("Should return error when create loan with loaned book")
     void testLoanedBookCreateLoan() throws Exception {
-        LoanDTO dto = LoanDTO.builder().isbn("123").customer("Cliente").build();
         String json = new ObjectMapper().writeValueAsString(dto);
 
-        Book book = Book.builder().id(1L).isbn("123").build();
         given(bookService.getBookByIsbn("123")).willReturn(
                 Optional.of(book));
 
@@ -166,7 +169,6 @@ public class LoanControllerTest {
     @DisplayName("Should return filtered loans")
     void testFindLoansByFilter() throws Exception{
         Long id = 1L;
-        Book book = Book.builder().id(id).isbn("123").build();
 
         Loan loan = Loan.builder()
                 .book(book)

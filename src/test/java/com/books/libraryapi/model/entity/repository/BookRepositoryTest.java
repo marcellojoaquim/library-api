@@ -2,6 +2,7 @@ package com.books.libraryapi.model.entity.repository;
 
 import com.books.libraryapi.model.entity.Book;
 import com.books.libraryapi.model.repository.BookRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,17 +21,23 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 class BookRepositoryTest {
 
+    private Book book;
+
     @Autowired
     TestEntityManager entityManager;
 
     @Autowired
     BookRepository repository;
 
+    @BeforeEach
+    void setup(){
+        book = Book.builder().author("Author").title("New Book").isbn("123").build();
+    }
+
     @Test
     @DisplayName("Should return true when find a book by isbn")
     void testExistsByIsbn() {
 
-        Book book = Book.builder().author("Author").title("New Book").isbn("123").build();
         entityManager.persist(book);
         String isbn = "123";
         boolean exists = repository.existsByIsbn(isbn);
@@ -52,7 +59,6 @@ class BookRepositoryTest {
     @Test
     @DisplayName("Should found a book by id")
     void testFindBookById(){
-        Book book = Book.builder().author("Author").title("New Book").isbn("123").build();
         entityManager.persist(book);
 
         Optional<Book> foundBook = repository.findById(book.getId());
@@ -63,8 +69,6 @@ class BookRepositoryTest {
     @Test
     @DisplayName("Should save a book")
     void testSaveBook(){
-        Book book = Book.builder().author("Author").title("New Book").isbn("123").build();
-
         Book savedBook = repository.save(book);
 
         assertNotNull(savedBook.getId());
@@ -74,7 +78,6 @@ class BookRepositoryTest {
     @Test
     @DisplayName("Should delete a book")
     void testDeleteBook(){
-        Book book = Book.builder().author("Author").title("New Book").isbn("123").build();
         entityManager.persist(book);
         Book foundBook = entityManager.find(Book.class, book.getId());
 
