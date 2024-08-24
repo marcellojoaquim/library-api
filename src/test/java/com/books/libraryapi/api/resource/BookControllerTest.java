@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,6 +29,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -52,7 +52,7 @@ public class BookControllerTest {
         BookDTO dto = BookDTO.builder().author("Author").title("New Book").isbn("1234").build();
         Book savedBook = Book.builder().id(1L).author("Author").title("New Book").isbn("1234").build();
 
-        BDDMockito.given(service.save(Mockito.any(Book.class))).willReturn(savedBook);
+        BDDMockito.given(service.save(any(Book.class))).willReturn(savedBook);
         String json = new ObjectMapper().writeValueAsString(dto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(BOOK_API)
@@ -88,7 +88,7 @@ public class BookControllerTest {
         BookDTO dto = BookDTO.builder().author("Author").title("New Book").isbn("1234").build();
         String json = new ObjectMapper().writeValueAsString(dto);
         String msg = "Isbn already exists.";
-        BDDMockito.given(service.save(Mockito.any(Book.class)))
+        BDDMockito.given(service.save(any(Book.class)))
                 .willThrow(new BusinessException(msg));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(BOOK_API)
@@ -130,7 +130,7 @@ public class BookControllerTest {
     @DisplayName("Should return an Not Found Exception when a book not found")
     void testBookNotFound() throws Exception{
 
-        given(service.getById(Mockito.anyLong())).willReturn(Optional.empty());
+        given(service.getById(anyLong())).willReturn(Optional.empty());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get(BOOK_API.concat("/"+1))
@@ -211,7 +211,7 @@ public class BookControllerTest {
         Long id = 1L;
         Book book = Book.builder().id(1L).title("Other Book").author("Other Author").isbn("123445").build();
 
-        given(service.find(Mockito.any(Book.class), Mockito.any(Pageable.class)))
+        given(service.find(any(Book.class), any(Pageable.class)))
                 .willReturn(new PageImpl<Book>(Arrays.asList(book), PageRequest.of(0, 100), 1));
 
         String queryString = String.format("?title=%s&author=%s&page=0&size=100",

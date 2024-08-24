@@ -1,5 +1,6 @@
 package com.books.libraryapi.service;
 
+import com.books.libraryapi.api.dto.LoanFilterDTO;
 import com.books.libraryapi.exception.BusinessException;
 import com.books.libraryapi.model.entity.Book;
 import com.books.libraryapi.model.entity.Loan;
@@ -10,10 +11,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
@@ -81,6 +89,86 @@ public class LoanServiceTest {
                 .hasMessage("Book already loaned");
 
         verify(repository, never()).save(savingLoan);
+    }
+
+    @Test
+    @DisplayName("Should return a loan by id")
+    void testGetLoanDetails(){
+        long id = 1L;
+        Book book = Book.builder().id(id).build();
+
+        Loan loan = Loan.builder()
+                .book(book)
+                .loanDate(LocalDate.now())
+                .customer("Cliente")
+                .id(id)
+                .build();
+
+        when(repository.findById(id)).thenReturn(Optional.of(loan));
+
+        Optional<Loan> actual = service.getByID(id);
+
+        assertNotNull(actual);
+        assertEquals(actual.get().getId(), 1L);
+        assertEquals(actual.get().getCustomer(), loan.getCustomer());
+        assertEquals(actual.get().getBook(), loan.getBook());
+        assertEquals(actual.get().getLoanDate(), loan.getLoanDate());
+
+        verify(repository).findById(id);
+    }
+
+    @Test
+    @DisplayName("Should update a loan")
+    void testUpdateLoan(){
+        Long id = 1L;
+        Book book = Book.builder().id(id).build();
+
+        Loan loan = Loan.builder()
+                .book(book)
+                .loanDate(LocalDate.now())
+                .customer("Cliente")
+                .id(id)
+                .build();
+
+        loan.setReturned(true);
+
+        when(repository.save(loan)).thenReturn(loan);
+
+        Loan actual = service.update(loan);
+
+        assertTrue(actual.getReturned());
+
+    }
+
+    @Test
+    @DisplayName("Should find loans with parameters")
+    void findLoanTest(){
+
+        LoanFilterDTO loanFilterDTO = LoanFilterDTO.builder()
+                .customer("Cliente")
+                .isbn("123").build();
+
+        Book book = Book.builder().id(1L).build();
+        Loan loan = Loan.builder()
+                .book(book)
+                .loanDate(LocalDate.now())
+                .customer("Cliente")
+                .id(1L)
+                .build();
+
+        PageRequest pageable = PageRequest.of(0, 10);
+        List<Loan> list = Arrays.asList(loan);
+
+        Page<Loan> page = new PageImpl<Loan>(list, pageable, list.size());
+        when(repository.findByBookIsbnOrCustomer(anyString(), anyString(), any(PageRequest.class)))
+                .thenReturn(page);
+
+        Page<Loan> result = service.find(loanFilterDTO, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals(list, result.getContent());
+        assertEquals(0, result.getPageable().getPageNumber());
+        assertEquals(10, result.getPageable().getPageSize());
     }
 
 }
