@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,5 +65,25 @@ public class LoanRepositoryTest {
         assertEquals(0, actual.getPageable().getPageNumber());
         assertEquals(1, actual.getTotalElements());
 
+    }
+
+    @Test
+    @DisplayName("Should return loans when date is less than three days ago")
+    void testFindLoansByDateLessThanAndNotReturned(){
+        loan.setLoanDate(LocalDate.now().minusDays(5));
+        loan.setCustomerEmail("customer@email.com");
+        List<Loan> list = repository.findByLoansDateLessThanAndNotReturned(LocalDate.now().minusDays(4));
+
+        assertNotNull(list);
+    }
+
+    @Test
+    @DisplayName("Should return empty list when date is bigger than three days")
+    void testNotFoundLoansByDateLessThanAndNotReturned(){
+        loan.setLoanDate(LocalDate.now());
+        loan.setCustomerEmail("customer@email.com");
+        List<Loan> list = repository.findByLoansDateLessThanAndNotReturned(LocalDate.now().minusDays(4));
+
+        assertTrue(list.isEmpty());
     }
 }

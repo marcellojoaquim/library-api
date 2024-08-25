@@ -27,6 +27,9 @@ public class Loan implements Serializable {
     @Column(length = 100)
     private String customer;
 
+    @Column(name = "customer_email")
+    private String customerEmail;
+
     @JoinColumn(name = "book_id")
     @ManyToOne
     private Book book;

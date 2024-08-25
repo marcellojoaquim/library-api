@@ -144,4 +144,6 @@ public class LoanServiceTest {
         assertEquals(10, result.getPageable().getPageSize());
     }
 
+
+
 }

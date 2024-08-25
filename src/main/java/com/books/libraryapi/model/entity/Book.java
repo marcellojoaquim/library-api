@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Builder
@@ -31,4 +32,7 @@ public class Book implements Serializable {
 
     @Column
     private String isbn;
+
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
+    private List<Loan> loans;
 }

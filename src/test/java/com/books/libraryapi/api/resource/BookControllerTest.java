@@ -4,6 +4,7 @@ import com.books.libraryapi.api.dto.BookDTO;
 import com.books.libraryapi.exception.BusinessException;
 import com.books.libraryapi.model.entity.Book;
 import com.books.libraryapi.service.BookService;
+import com.books.libraryapi.service.LoanService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,13 +40,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {BookController.class})
 public class BookControllerTest {
 
-    private static String BOOK_API = "/api/books";
+    private static final String BOOK_API = "/api/books";
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
     BookService service;
+
+    @MockBean
+    LoanService loanService;
 
     @Test
     @DisplayName("Should return success when create a new book")
