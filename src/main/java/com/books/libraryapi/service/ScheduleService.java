@@ -33,7 +33,6 @@ public class ScheduleService {
                 .collect(Collectors.toList());
 
         emailService.sendEmails(message, mailList);
-        System.out.println("sent");
 
     }
 }
