@@ -6,6 +6,7 @@ import com.books.libraryapi.model.entity.Book;
 import com.books.libraryapi.model.entity.Loan;
 import com.books.libraryapi.service.BookService;
 import com.books.libraryapi.service.LoanService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -69,6 +70,7 @@ public class BookController {
     }
 
     @GetMapping
+    @Operation(description = "Get Books as list")
     public PageImpl<BookDTO> find(BookDTO dto, Pageable pageable){
         Book filter = modelMapper.map(dto, Book.class);
         Page<Book> result = service.find(filter, pageable);
