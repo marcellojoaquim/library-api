@@ -36,6 +36,7 @@ public class BookController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(description = "Create a new Book")
     public BookDTO create(@RequestBody @Valid BookDTO dto){
         Book entity = modelMapper.map(dto, Book.class);
         entity = service.save(entity);
@@ -44,6 +45,7 @@ public class BookController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "Get book by Id")
     public BookDTO get(@PathVariable Long id){
         return service
                 .getById(id).map(book -> modelMapper.map(book, BookDTO.class))
@@ -52,6 +54,7 @@ public class BookController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "Update Book by Id")
     public BookDTO update(@PathVariable Long id, @RequestBody BookDTO bookDTO){
         return service.getById(id).map( book -> {
             book.setAuthor(bookDTO.getAuthor());
@@ -64,6 +67,7 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Delete book by Id")
     public void delete(@PathVariable long id) throws Exception{
         Book book = service.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         service.delete(book);
@@ -82,6 +86,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}/loans")
+    @Operation(description = "Get loans by Book")
     public Page<LoanDTO> loansByBook(@PathVariable Long id, Pageable pageable){
         Book book = service.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Page<Loan> result = loanService.getLoansByBook(book, pageable);

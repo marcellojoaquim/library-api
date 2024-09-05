@@ -8,6 +8,7 @@ import com.books.libraryapi.model.entity.Book;
 import com.books.libraryapi.model.entity.Loan;
 import com.books.libraryapi.service.BookService;
 import com.books.libraryapi.service.LoanService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -36,6 +37,7 @@ public class LoanController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(description = "Create a new Loan")
     public Long create(@RequestBody LoanDTO dto){
         Book book = bookService.getBookByIsbn(dto.getIsbn()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Book not found for this isbn")
@@ -54,6 +56,7 @@ public class LoanController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "Get a loan by Id")
     public void returnBook(@PathVariable Long id, @RequestBody ReturnedLoanDTO dto){
         Loan loan = service.getByID(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         loan.setReturned(dto.getReturned());
@@ -62,6 +65,7 @@ public class LoanController {
     }
 
     @GetMapping
+    @Operation(description = "Get loans as list")
     public Page<LoanDTO> find(LoanFilterDTO dto, Pageable pageable){
         Page<Loan> result = service.find(dto, pageable);
 
