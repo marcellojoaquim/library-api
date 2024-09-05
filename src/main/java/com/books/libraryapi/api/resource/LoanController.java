@@ -80,5 +80,4 @@ public class LoanController {
         return new PageImpl<LoanDTO>(loans, pageable, result.getTotalElements());
     }
 
-
 }
