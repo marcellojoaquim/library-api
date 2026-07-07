@@ -1,29 +1,31 @@
-# Library API Project
+# Projeto - Library API
 
-# About this project
+# Sobre
 
-ApiRest developed in java with spring boot, in this project you will have api for books 
-and for managing book loans, you will also have a previous configuration for Spring Admin and travis-ci.
+<p>Projeto de gerenciamento de bibliotecas desenvolvido em Java com Spring Boot, neste 
+sistema é possível cadastrar livros, atualizar, buscar livros, buscar livros alugados, além disso
+é possível gerenciar os alugueis de livros, este sistema possui um serviço de envio de emails com 
+aviso para o caso de devolução atrasada, este serviço de envio de email e executado via cronjob.</p>
 
-# Book API
+# API Book
 -Base URL: api/books
 
 ## Methods HTTP
-- Create
-- Update 
-- Get
-- Get loans by book
+- Criar POST
+- Atualizar PUT
+- Buscar GET
+- Buscar aluguel (loan) por Livro
 
-# Loans API
+# API Loans (Aluguel)
 -Base URL: api/loans
 
 ## Methods HTTP
-- Create
-- Find
-- Get by id
+- Criar POST
+- Buscar GET
+- Buscar por Id GET
 
 
-# Technologies Used
+# Tecnologias usadas
 - Java 17
 - Maven
 - Spring Boot
@@ -31,8 +33,13 @@ and for managing book loans, you will also have a previous configuration for Spr
 - H2 DataBase
 - Postman
 
+# Como executar o projeto
+- Java 17 instalado
+- Baixar o projeto  via git clone por exemplo
+- Executar o comando mvn clean package
+- Executar o comando java library-api-0.0.1-SNAPSHOT.jar
 
-# Author
+# Autor
 
 Marcello Joaquim da Silva
 
